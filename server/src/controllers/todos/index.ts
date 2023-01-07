@@ -30,10 +30,33 @@ const addItem = async (req: Request, res: Response): Promise<void> => {
     }
 }
 
-const updateTodo = async (req: Request, res: Response): Promise<void> => {
+const updateItem = async (req: Request, res: Response): Promise<void> => {
     try {
         const { params: { id }, body } = req
+        const item: ITodo | null = await todo.findByIdAndUpdate(
+            { _id: id },
+            body
+        )
+
+        const all: ITodo[] = await todo.find()
+
+        res.status(200).json({ message: 'Item updated succesfully', updated: item, todos: all })
     } catch (e) {
         throw e
     }
 }
+
+const deleteItem = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const item: ITodo | null = await todo.findByIdAndRemove(
+            req.params.id
+        )
+        const all: ITodo[] = await todo.find()
+
+        res.status(200).json({ message: 'Item deleted succesfully', delted: item, todos: all })
+    } catch (e) {
+        throw e
+    }
+}
+
+export { getItems, addItem, updateItem, deleteItem };
